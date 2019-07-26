@@ -1,0 +1,50 @@
+syntax = "proto2";
+
+package emulator_automation;
+
+message FileHeader {
+    optional uint32 version = 1;
+    optional InitialState initial_state = 2;
+    optional uint64 duration_ns = 3;
+}
+
+message InitialState {
+    repeated PhysicalModelEvent physical_model = 2;
+}
+
+message RecordedEvent {
+    optional uint64 delay = 1;
+
+    oneof stream {
+        PhysicalModelEvent physical_model = 50;
+        TouchEvent touch = 51;
+    }
+}
+
+message PhysicalModelEvent {
+    enum ParameterType {
+        POSITION = 0;
+        ROTATION = 1;
+        MAGNETIC_FIELD = 2;
+        TEMPERATURE = 3;
+        PROXIMITY = 4;
+        LIGHT = 5;
+        PRESSURE = 6;
+        HUMIDITY = 7;
+        VELOCITY = 8;
+        AMBIENT_MOTION = 9;
+    }
+
+    message ParameterValue {
+      repeated float data = 1 [packed=true];
+    }
+
+    optional ParameterType type = 1;
+    optional ParameterValue current_value = 2;
+    optional ParameterValue target_value = 3;
+}
+
+message TouchEvent {
+    optional float x = 1;
+    optional float y = 2;
+}
